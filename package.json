@@ -38,5 +38,21 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"
+  },
+  "engines": {
+    "node": "22",
+    "npm": "11"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "22",
+      "onFail": "warn"
+    },
+    "packageManager": {
+      "name": "npm",
+      "version": "11",
+      "onFail": "warn"
+    }
   }
 }

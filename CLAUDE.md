@@ -34,7 +34,7 @@ This is an Electron application built with TypeScript and Vite. The project uses
 The project uses multiple Vite configurations:
 - `vite.main.config.ts` - Main process build
 - `vite.preload.config.ts` - Preload script build  
-- `vite.renderer.config.ts` - Renderer process build
+- `vite.renderer.config.mts` - Renderer process build
 
 Electron Forge configuration is in `forge.config.ts` and includes:
 - Multiple platform makers (Squirrel, ZIP, Deb, RPM)

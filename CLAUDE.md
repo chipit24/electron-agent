@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Coding Guidelines
+
+- Always reference the latest documentation to prevent hallucinations and incorrect or deprecated usage. For this, use the Context7. If you cannot find documentation via Context7, or the documentation is unsufficient, then search the web.
+  - The Context7 has documentation for Electron Forge at `electron-forge/electron-forge-docs` and for Electron at `electron/electron`.
+
 ## Project Overview
 
 This is an Electron application built with TypeScript and Vite. The project uses Electron Forge for packaging and distribution.

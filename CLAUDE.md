@@ -21,10 +21,12 @@ This is an Electron application built with TypeScript and Vite. The project uses
 ## Common Commands
 
 ### Development
+
 - `npm start` - Start the Electron app in development mode
 - `npm run lint` - Run ESLint on TypeScript files
 
 ### Building & Packaging
+
 - `npm run package` - Package the app for distribution
 - `npm run make` - Create platform-specific distributables
 - `npm run publish` - Publish the app
@@ -32,11 +34,13 @@ This is an Electron application built with TypeScript and Vite. The project uses
 ## Build Configuration
 
 The project uses multiple Vite configurations:
+
 - `vite.main.config.ts` - Main process build
-- `vite.preload.config.ts` - Preload script build  
+- `vite.preload.config.ts` - Preload script build
 - `vite.renderer.config.mts` - Renderer process build
 
 Electron Forge configuration is in `forge.config.ts` and includes:
+
 - Multiple platform makers (Squirrel, ZIP, Deb, RPM)
 - Security fuses for hardening
 - VitePlugin for build integration

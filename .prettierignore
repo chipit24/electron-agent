@@ -1,0 +1,32 @@
+# Ignore artifacts:
+build
+dist
+coverage
+node_modules
+
+# Ignore generated files:
+.vite
+out
+package-lock.json
+
+# Ignore local config files:
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore git files:
+.git
+.gitignore
+
+# Ignore Electron specific:
+*.asar
+*.app
+*.dmg
+*.exe
+*.msi
+*.snap
+*.deb
+*.rpm
+*.tar.gz

@@ -2,9 +2,7 @@ export function App() {
   return (
     <main className="p-6 flex flex-col gap-2 h-dvh">
       <h1 className="font-semibold text-xl">Electron Agent 🤖</h1>
-      <output className="border h-full w-full border rounded-md p-2">
-        
-      </output>
+      <output className="h-full w-full border rounded-md p-2" />
       <textarea
         name="user-prompt"
         rows={3}
@@ -12,5 +10,5 @@ export function App() {
         placeholder="Enter your message here ..."
       />
     </main>
-  )
+  );
 }

@@ -10,7 +10,10 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "type-check": "npm run type-check:renderer && npm run type-check:node",
+    "type-check:renderer": "tsc --noEmit --project tsconfig.renderer.json",
+    "type-check:node": "tsc --noEmit --project tsconfig.node.json"
   },
   "keywords": [],
   "author": {
@@ -29,18 +32,21 @@
     "@electron-forge/plugin-vite": "^7.8.1",
     "@electron/fuses": "^1.8.0",
     "@tailwindcss/vite": "^4.1.10",
+    "@types/electron-squirrel-startup": "^1.0.2",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "@vitejs/plugin-react": "^4.5.2",
     "electron": "36.5.0",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.5",
+    "eslint-import-resolver-typescript": "^3.10.1",
     "eslint-plugin-import": "^2.32.0",
     "prettier": "3.5.3",
     "tailwindcss": "^4.1.10",
     "ts-node": "^10.9.2",
-    "typescript": "~4.5.4",
+    "typescript": "^5.6.0",
     "vite": "^5.4.19"
   },
   "dependencies": {

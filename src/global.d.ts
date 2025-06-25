@@ -1,7 +1,7 @@
+import type { AgentApi } from "./preload";
+
 declare global {
   interface Window {
-    api: { desktop: boolean };
+    agentApi: AgentApi;
   }
 }
-
-export {};

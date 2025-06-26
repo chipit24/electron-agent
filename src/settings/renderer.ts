@@ -13,4 +13,4 @@
  */
 
 import "../index.css";
-import "./settings";
+import "./main";

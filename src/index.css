@@ -1,1 +1,17 @@
+/* Import Zilla Slab font variants */
+@import "@fontsource/zilla-slab/300.css";
+@import "@fontsource/zilla-slab/400.css";
+@import "@fontsource/zilla-slab/500.css";
+@import "@fontsource/zilla-slab/600.css";
+@import "@fontsource/zilla-slab/700.css";
+@import "@fontsource/zilla-slab/300-italic.css";
+@import "@fontsource/zilla-slab/400-italic.css";
+@import "@fontsource/zilla-slab/700-italic.css";
+
+/* Import Tailwind CSS */
 @import "tailwindcss";
+
+/* Configure custom fonts using Tailwind v4 @theme directive */
+@theme {
+  --font-serif: "Zilla Slab", serif;
+}

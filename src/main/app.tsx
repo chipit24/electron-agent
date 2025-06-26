@@ -6,8 +6,8 @@ export function App() {
   }
 
   return (
-    <main className="p-6 flex flex-col gap-2 h-dvh">
-      <h1 className="font-semibold text-xl">Electron Agent 🤖</h1>
+    <main className="px-6 py-4 flex flex-col gap-2 h-dvh">
+      <h1 className="font-serif font-semibold text-xl">Electron Agent 🤖</h1>
       <output className="h-full w-full border rounded-md p-2" />
 
       <div className="flex">

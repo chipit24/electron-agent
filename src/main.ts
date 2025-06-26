@@ -83,18 +83,23 @@ const createSettingsWindow = () => {
     settingsWindow?.show();
   });
 
-  // Clean up when window is closed
+  // Clean up when window is closed and refocus main window
   settingsWindow.on("closed", () => {
     settingsWindow = undefined;
+    // Refocus the main window after settings window closes
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.focus();
+    }
   });
 };
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   initAgentsHandlers();
-  initSettingsHandlers();
+  initSettingsHandlers(() => settingsWindow);
 
   createWindow();
 

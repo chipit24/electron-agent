@@ -5,6 +5,7 @@ const settingsApi = {
   setApiKey: (apiKey: string) =>
     ipcRenderer.invoke("settings:setApiKey", apiKey),
   clearApiKey: () => ipcRenderer.invoke("settings:clearApiKey"),
+  closeWindow: () => ipcRenderer.invoke("settings:closeWindow"),
 };
 contextBridge.exposeInMainWorld("settingsApi", settingsApi);
 export type SettingsApi = typeof settingsApi;

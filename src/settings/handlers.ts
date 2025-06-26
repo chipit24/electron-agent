@@ -1,21 +1,19 @@
 import Store from "electron-store";
 import { ipcMain } from "electron";
 
-const settings = new Store({
-  name: "app-settings",
-});
+const store = new Store();
 
 export function initSettingsHandlers() {
-  // Set up IPC handlers for settings
+  // Set up IPC handlers for handlers
   ipcMain.handle("settings:getApiKey", () => {
-    return settings.get("apiKey") as string | undefined;
+    return store.get("apiKey") as string | undefined;
   });
 
   ipcMain.handle("settings:setApiKey", (event, apiKey: string) => {
-    settings.set("apiKey", apiKey);
+    store.set("apiKey", apiKey);
   });
 
   ipcMain.handle("settings:clearApiKey", () => {
-    settings.delete("apiKey");
+    store.delete("apiKey");
   });
 }

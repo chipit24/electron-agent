@@ -17,8 +17,8 @@
   },
   "include": [
     "src/main.ts",
-    "src/preload.ts",
-    "src/apiHandlers/**/*",
+    "**/preload.ts",
+    "**/handlers.ts",
     "*.config.*",
     "forge.env.d.ts"
   ],

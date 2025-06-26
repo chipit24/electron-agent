@@ -29,13 +29,23 @@ const config: ForgeConfig = {
           config: "vite.main.config.ts",
           target: "main",
         },
+        /* Note: Currently using the same Vite config for all preload scripts */
         {
-          entry: "src/preload.ts",
+          entry: "src/main/preload.ts",
+          config: "vite.preload.config.ts",
+          target: "preload",
+        },
+        {
+          entry: "src/settings/preload.ts",
           config: "vite.preload.config.ts",
           target: "preload",
         },
       ],
-      renderer: [{ name: "main_window", config: "vite.renderer.config.mts" }],
+      renderer: [
+        /* Note: Currently using the same Vite config for all windows */
+        { name: "main_window", config: "vite.renderer.config.mts" },
+        { name: "settings_window", config: "vite.renderer.config.mts" },
+      ],
     }),
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application

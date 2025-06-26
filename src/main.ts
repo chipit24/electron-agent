@@ -1,8 +1,8 @@
 import { app, BrowserWindow, Menu } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
-import { initAgentsHandlers } from "./apiHandlers/agents";
-import { initSettingsHandlers } from "./apiHandlers/settings";
+import { initAgentsHandlers } from "./main/handlers";
+import { initSettingsHandlers } from "./settings/handlers";
 
 const isMac = process.platform === "darwin";
 
@@ -23,7 +23,7 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "main/preload.js"),
     },
   });
 
@@ -64,13 +64,12 @@ const createSettingsWindow = () => {
     parent: mainWindow,
     show: false,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "settings/preload.js"),
     },
   });
 
   // Load the settings HTML
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    // In development, load from the dev server
     settingsWindow.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/settings.html`);
   } else {
     // In production, load from file

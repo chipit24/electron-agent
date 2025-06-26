@@ -20,10 +20,16 @@
   },
   "include": [
     "src/renderer.ts",
-    "src/root.tsx",
+    "src/settings/renderer.ts",
+    "src/main.tsx",
     "src/app.tsx",
     "src/**/*.tsx",
     "src/**/*.ts"
   ],
-  "exclude": ["src/main.ts", "src/preload.ts", "node_modules"]
+  "exclude": [
+    "src/main.ts",
+    "src/preload.ts",
+    "src/apiHandlers",
+    "node_modules"
+  ]
 }

@@ -1,16 +1,25 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, Menu } from "electron";
 import path from "node:path";
 import started from "electron-squirrel-startup";
-import { initHandlers } from "./agentApi/handlers";
+import { initAgentsHandlers } from "./apiHandlers/agents";
+import { initSettingsHandlers } from "./apiHandlers/settings";
+
+const isMac = process.platform === "darwin";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
 }
 
+let mainWindow: BrowserWindow | undefined;
 const createWindow = () => {
+  if (mainWindow) {
+    mainWindow.focus();
+    return;
+  }
+
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -31,14 +40,83 @@ const createWindow = () => {
   if (process.env.NODE_ENV !== "production") {
     mainWindow.webContents.openDevTools();
   }
+
+  mainWindow.on("closed", () => {
+    mainWindow = undefined;
+  });
+};
+
+let settingsWindow: BrowserWindow | undefined;
+const createSettingsWindow = () => {
+  // If settings window already exists, focus it
+  if (settingsWindow) {
+    settingsWindow.focus();
+    return;
+  }
+
+  settingsWindow = new BrowserWindow({
+    width: 600,
+    height: 400,
+    resizable: false,
+    minimizable: false,
+    maximizable: false,
+    modal: true,
+    parent: mainWindow,
+    show: false,
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+    },
+  });
+
+  // Load the settings HTML
+  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    // In development, load from the dev server
+    settingsWindow.loadURL(`${MAIN_WINDOW_VITE_DEV_SERVER_URL}/settings.html`);
+  } else {
+    // In production, load from file
+    settingsWindow.loadFile(
+      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/settings.html`)
+    );
+  }
+
+  // Show the modal window once it's ready
+  settingsWindow.once("ready-to-show", () => {
+    settingsWindow?.show();
+  });
+
+  // Clean up when window is closed
+  settingsWindow.on("closed", () => {
+    settingsWindow = undefined;
+  });
 };
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  initHandlers();
+  initAgentsHandlers();
+  initSettingsHandlers();
+
   createWindow();
+
+  Menu.setApplicationMenu(
+    Menu.buildFromTemplate([
+      {
+        label: isMac ? app.getName() : "File",
+        submenu: [
+          {
+            label: "Settings...",
+            accelerator: "CmdOrCtrl+,",
+            click: () => {
+              createSettingsWindow();
+            },
+          },
+          { type: "separator" },
+          { role: "quit" },
+        ],
+      },
+    ])
+  );
 
   app.on("activate", () => {
     // On OS X it's common to re-create a window in the app when the
@@ -53,7 +131,7 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
+  if (!isMac) {
     app.quit();
   }
 });

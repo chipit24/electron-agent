@@ -2,8 +2,7 @@ import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
 import { App } from "./app";
 
-const root = createRoot(document.body);
-root.render(
+createRoot(document.getElementById("main") || document.body).render(
   <StrictMode>
     <App />
   </StrictMode>

@@ -2,12 +2,19 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 import { contextBridge, ipcRenderer } from "electron";
 
-export const agentApi = {
+const agentApi = {
   sendMessage: (message: string) => {
-    return ipcRenderer.invoke("handleMessage", message);
+    return ipcRenderer.invoke("agent:handleMessage", message);
   },
 };
-
+contextBridge.exposeInMainWorld("apiHandlers", agentApi);
 export type AgentApi = typeof agentApi;
 
-contextBridge.exposeInMainWorld("agentApi", agentApi);
+const settingsApi = {
+  getApiKey: () => ipcRenderer.invoke("settings:getApiKey"),
+  setApiKey: (apiKey: string) =>
+    ipcRenderer.invoke("settings:setApiKey", apiKey),
+  clearApiKey: () => ipcRenderer.invoke("settings:clearApiKey"),
+};
+contextBridge.exposeInMainWorld("settingsApi", settingsApi);
+export type SettingsApi = typeof settingsApi;

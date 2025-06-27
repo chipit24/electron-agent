@@ -1,17 +1,17 @@
 import Store from "electron-store";
 import { ipcMain } from "electron";
 
-const store = new Store();
+export const settingsStore = new Store();
 
 export function initSettingsHandlers(
   getSettingsWindow: () => Electron.BrowserWindow | undefined
 ) {
   ipcMain.handle("settings:getApiKey", () => {
-    return store.get("apiKey") as string | undefined;
+    return settingsStore.get("apiKey") as string | undefined;
   });
 
   ipcMain.handle("settings:setApiKey", (_event, apiKey: string) => {
-    store.set("apiKey", apiKey);
+    settingsStore.set("apiKey", apiKey);
   });
 
   ipcMain.handle("settings:closeWindow", () => {

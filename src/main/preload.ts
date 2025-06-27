@@ -7,5 +7,5 @@ const agentApi = {
     return ipcRenderer.invoke("agent:handleMessage", message);
   },
 };
-contextBridge.exposeInMainWorld("apiHandlers", agentApi);
+contextBridge.exposeInMainWorld("agentApi", agentApi);
 export type AgentApi = typeof agentApi;

@@ -15,12 +15,6 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": [
-    "src/main.ts",
-    "**/preload.ts",
-    "**/handlers.ts",
-    "*.config.*",
-    "forge.env.d.ts"
-  ],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts", "*.config.*", "forge.env.d.ts"],
+  "exclude": ["node_modules", "src/settings/renderer", "src/main/renderer"]
 }

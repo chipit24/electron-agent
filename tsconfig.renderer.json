@@ -18,6 +18,10 @@
     "jsx": "react-jsx",
     "types": ["vite/client"]
   },
-  "include": ["src/**/*.tsx", "src/**/*.ts"],
-  "exclude": ["src/main.ts", "**/preload.ts", "**/handlers.ts", "node_modules"]
+  "include": [
+    "src/settings/renderer/**/*",
+    "src/main/renderer/**/*",
+    "src/global.d.ts"
+  ],
+  "exclude": ["node_modules"]
 }

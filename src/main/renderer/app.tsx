@@ -1,10 +1,15 @@
-import { CSSProperties } from "react";
+import { CSSProperties, useState } from "react";
 
 export function App() {
+  const [message, setMessage] = useState("");
+
   async function sendMessage() {
+    if (!message.trim()) return;
+
     console.log("Posting message ...");
-    const response = await window.agentApi.sendMessage("Testing! 🤘");
+    const response = await window.agentApi.sendMessage(message.trim());
     console.log("response", response);
+    setMessage("");
   }
 
   return (
@@ -18,7 +23,7 @@ export function App() {
         Electron Agent 🤖
       </h1>
 
-      <output className="grow p-2 shadow-md" />
+      <section className="grow p-2 shadow-md" />
 
       <div className="flex gap-2 m-2">
         <textarea
@@ -26,6 +31,8 @@ export function App() {
           rows={3}
           className="w-full border rounded-md p-2"
           placeholder="Enter your message here ..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
         />
         <button
           type="button"

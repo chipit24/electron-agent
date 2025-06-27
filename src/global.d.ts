@@ -1,4 +1,4 @@
-import type { AgentApi, SettingsApi } from "./main/preload";
+import type { AgentApi } from "./main/preload";
 import type { SettingsApi } from "./settings/preload";
 
 declare global {

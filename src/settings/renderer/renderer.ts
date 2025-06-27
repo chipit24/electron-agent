@@ -12,5 +12,5 @@
  * https://electronjs.org/docs/tutorial/security
  */
 
-import "../index.css";
+import "../../index.css";
 import "./main";

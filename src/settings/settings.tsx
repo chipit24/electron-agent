@@ -42,10 +42,12 @@ export function Settings() {
   }, []);
 
   return (
-    <main className="px-6 py-4 font-serif flex flex-col gap-2 min-h-dvh">
-      <h1 className="text-lg font-semibold text-amber-800">Settings</h1>
+    <main className="p-2 font-serif flex flex-col gap-2 min-h-dvh">
+      <h1 className="text-lg font-semibold text-amber-800 text-center">
+        Settings
+      </h1>
 
-      <div className="flex flex-col my-auto">
+      <div className="flex flex-col my-auto p-2">
         <label htmlFor="apiKey" className="text-amber-800">
           API Key
         </label>

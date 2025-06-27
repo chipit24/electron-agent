@@ -48,7 +48,15 @@ const createWindow = () => {
 };
 
 let settingsWindow: BrowserWindow | undefined;
+
+// Create and show settings window with ready-to-show pattern
 const createSettingsWindow = () => {
+  // Don't create multiple settings windows
+  if (settingsWindow && !settingsWindow.isDestroyed()) {
+    settingsWindow.focus();
+    return;
+  }
+
   settingsWindow = new BrowserWindow({
     width: 400,
     height: 300,
@@ -57,10 +65,16 @@ const createSettingsWindow = () => {
     maximizable: false,
     modal: true,
     parent: mainWindow,
-    show: false, // Keep hidden until user requests it
+    show: false, // Wait for ready-to-show event
     webPreferences: {
       preload: path.join(__dirname, "settings/preload.js"),
     },
+  });
+
+  // Show window when ready to prevent visual flash
+  settingsWindow.once("ready-to-show", () => {
+    settingsWindow?.show();
+    settingsWindow?.focus();
   });
 
   // Load the settings HTML
@@ -73,23 +87,14 @@ const createSettingsWindow = () => {
     );
   }
 
-  // Hide window instead of closing to preserve rendered state
-  settingsWindow.on("close", (event) => {
-    event.preventDefault(); // Prevent actual closing
-    settingsWindow?.hide();
-    // Refocus the main window after settings window hides
+  // Clean up reference when window is closed
+  settingsWindow.on("closed", () => {
+    settingsWindow = undefined;
+    // Refocus the main window after settings window closes
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.focus();
     }
   });
-};
-
-// Show pre-created settings window instantly
-const showSettingsWindow = () => {
-  if (settingsWindow && !settingsWindow.isDestroyed()) {
-    settingsWindow.show();
-    settingsWindow.focus();
-  }
 };
 
 // This method will be called when Electron has finished
@@ -100,7 +105,6 @@ app.whenReady().then(() => {
   initSettingsHandlers(() => settingsWindow);
 
   createWindow();
-  createSettingsWindow();
 
   Menu.setApplicationMenu(
     Menu.buildFromTemplate([
@@ -111,7 +115,7 @@ app.whenReady().then(() => {
             label: "Settings...",
             accelerator: "CmdOrCtrl+,",
             click: () => {
-              showSettingsWindow();
+              createSettingsWindow();
             },
           },
           { type: "separator" },

@@ -129,7 +129,7 @@ app.whenReady().then(() => {
           { role: "copy" },
           { role: "paste" },
           { type: "separator" },
-          { role: "selectall" },
+          { role: "selectAll" },
         ],
       },
     ])

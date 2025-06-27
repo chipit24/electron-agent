@@ -12,7 +12,7 @@ export function MessageBubble({ message }: { message: Message }) {
   const isSending = message.status === "sending";
 
   return (
-    <div className={`flex mb-2 ${isUser ? "justify-end" : "justify-start"}`}>
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
         className={`max-w-md px-4 py-2 rounded-2xl ${
           isUser

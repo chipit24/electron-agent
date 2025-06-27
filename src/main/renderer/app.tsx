@@ -100,7 +100,7 @@ export function App() {
         Electron Agent 🤖
       </h1>
 
-      <section className="flex-1 overflow-y-auto p-4 gap-y-1 shadow-md">
+      <section className="flex flex-col flex-1 overflow-y-auto p-2 gap-y-1 custom-scrollbar">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-amber-600 text-center opacity-70">
@@ -134,7 +134,7 @@ export function App() {
         )}
       </section>
 
-      <div className="flex gap-2 mx-2 mb-2 mt-4">
+      <div className="flex gap-2 m-2">
         {hasApiKey ? (
           <textarea
             name="user-prompt"

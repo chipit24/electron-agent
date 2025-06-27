@@ -1,8 +1,31 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export function Settings() {
+  const [apiKey, setApiKey] = useState("");
+  useEffect(() => {
+    const fetchApiKey = async () => {
+      try {
+        const key = await window.settingsApi.getApiKey();
+        setApiKey(key || "");
+      } catch (error) {
+        console.error("Failed to fetch API key:", error);
+      }
+    };
+
+    fetchApiKey();
+  }, []);
+
   const handleClose = () => {
     window.settingsApi.closeWindow();
+  };
+
+  const handleSave = async () => {
+    try {
+      await window.settingsApi.setApiKey(apiKey);
+      handleClose();
+    } catch (error) {
+      console.error("Failed to save API key:", error);
+    }
   };
 
   useEffect(() => {
@@ -20,7 +43,7 @@ export function Settings() {
 
   return (
     <main className="px-6 py-4 font-serif flex flex-col gap-2 min-h-dvh">
-      <h1 className="text-2xl font-bold text-amber-800">Settings</h1>
+      <h1 className="text-lg font-semibold text-amber-800">Settings</h1>
 
       <div className="flex flex-col my-auto">
         <label htmlFor="apiKey" className="text-amber-800">
@@ -29,6 +52,8 @@ export function Settings() {
         <input
           type="text"
           name="apiKey"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
           className="w-full py-2 px-3 bg-gray-50 rounded-lg border border-amber-500 text-amber-800 font-mono"
         />
       </div>
@@ -40,7 +65,10 @@ export function Settings() {
         >
           Cancel
         </button>
-        <button className="bg-amber-800 text-white text-lg px-8 py-2 rounded-lg cursor-pointer">
+        <button
+          onClick={handleSave}
+          className="bg-amber-800 text-white text-lg px-8 py-2 rounded-lg cursor-pointer"
+        >
           Save
         </button>
       </div>

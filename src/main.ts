@@ -22,6 +22,7 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    titleBarStyle: "hiddenInset",
     webPreferences: {
       preload: path.join(__dirname, "main/preload.js"),
     },
@@ -49,8 +50,8 @@ const createWindow = () => {
 let settingsWindow: BrowserWindow | undefined;
 const createSettingsWindow = () => {
   settingsWindow = new BrowserWindow({
-    width: 600,
-    height: 400,
+    width: 400,
+    height: 300,
     resizable: false,
     minimizable: false,
     maximizable: false,

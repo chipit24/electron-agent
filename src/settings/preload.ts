@@ -4,7 +4,6 @@ const settingsApi = {
   getApiKey: () => ipcRenderer.invoke("settings:getApiKey"),
   setApiKey: (apiKey: string) =>
     ipcRenderer.invoke("settings:setApiKey", apiKey),
-  clearApiKey: () => ipcRenderer.invoke("settings:clearApiKey"),
   closeWindow: () => ipcRenderer.invoke("settings:closeWindow"),
 };
 contextBridge.exposeInMainWorld("settingsApi", settingsApi);

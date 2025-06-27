@@ -14,10 +14,6 @@ export function initSettingsHandlers(
     store.set("apiKey", apiKey);
   });
 
-  ipcMain.handle("settings:clearApiKey", () => {
-    store.delete("apiKey");
-  });
-
   ipcMain.handle("settings:closeWindow", () => {
     const settingsWindow = getSettingsWindow();
     if (settingsWindow && !settingsWindow.isDestroyed()) {

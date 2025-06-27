@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 export function App() {
   async function sendMessage() {
     console.log("Posting message ...");
@@ -6,11 +8,19 @@ export function App() {
   }
 
   return (
-    <main className="px-6 py-4 flex flex-col gap-2 h-dvh">
-      <h1 className="font-serif font-semibold text-xl">Electron Agent 🤖</h1>
-      <output className="h-full w-full border rounded-md p-2" />
+    <main className="flex flex-col h-dvh font-serif relative bg-amber-50">
+      <div
+        className="h-9 w-full absolute top-0 left-0 bg-amber-100 flex items-center justify-center"
+        style={{ WebkitAppRegion: "drag" } as CSSProperties}
+      />
 
-      <div className="flex">
+      <h1 className="font-semibold text-lg h-9 relative w-full flex items-center justify-center">
+        Electron Agent 🤖
+      </h1>
+
+      <output className="grow p-2 shadow-md" />
+
+      <div className="flex gap-2 m-2">
         <textarea
           name="user-prompt"
           rows={3}
@@ -19,7 +29,7 @@ export function App() {
         />
         <button
           type="button"
-          className="border rounded-md p-2 ml-2 hover:cursor-pointer hover:bg-gray-200 active:bg-gray-300"
+          className="bg-amber-800 text-white text-lg px-8 py-2 rounded-lg cursor-pointer leading-none"
           onClick={sendMessage}
         >
           Send message

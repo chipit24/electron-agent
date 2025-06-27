@@ -29,7 +29,7 @@ export function Settings() {
         <input
           type="text"
           name="apiKey"
-          className="w-full py-2 px-3 bg-gray-50 rounded-lg border border-amber-500 text-amber-800"
+          className="w-full py-2 px-3 bg-gray-50 rounded-lg border border-amber-500 text-amber-800 font-mono"
         />
       </div>
 

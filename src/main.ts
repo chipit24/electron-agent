@@ -48,12 +48,6 @@ const createWindow = () => {
 
 let settingsWindow: BrowserWindow | undefined;
 const createSettingsWindow = () => {
-  // If settings window already exists, focus it
-  if (settingsWindow) {
-    settingsWindow.focus();
-    return;
-  }
-
   settingsWindow = new BrowserWindow({
     width: 600,
     height: 400,
@@ -62,7 +56,7 @@ const createSettingsWindow = () => {
     maximizable: false,
     modal: true,
     parent: mainWindow,
-    show: false,
+    show: false, // Keep hidden until user requests it
     webPreferences: {
       preload: path.join(__dirname, "settings/preload.js"),
     },
@@ -78,21 +72,24 @@ const createSettingsWindow = () => {
     );
   }
 
-  // Show the modal window once it's ready
-  settingsWindow.once("ready-to-show", () => {
-    settingsWindow?.show();
-  });
-
-  // Clean up when window is closed and refocus main window
-  settingsWindow.on("closed", () => {
-    settingsWindow = undefined;
-    // Refocus the main window after settings window closes
+  // Hide window instead of closing to preserve rendered state
+  settingsWindow.on("close", (event) => {
+    event.preventDefault(); // Prevent actual closing
+    settingsWindow?.hide();
+    // Refocus the main window after settings window hides
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.focus();
     }
   });
 };
 
+// Show pre-created settings window instantly
+const showSettingsWindow = () => {
+  if (settingsWindow && !settingsWindow.isDestroyed()) {
+    settingsWindow.show();
+    settingsWindow.focus();
+  }
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -102,6 +99,7 @@ app.whenReady().then(() => {
   initSettingsHandlers(() => settingsWindow);
 
   createWindow();
+  createSettingsWindow();
 
   Menu.setApplicationMenu(
     Menu.buildFromTemplate([
@@ -112,7 +110,7 @@ app.whenReady().then(() => {
             label: "Settings...",
             accelerator: "CmdOrCtrl+,",
             click: () => {
-              createSettingsWindow();
+              showSettingsWindow();
             },
           },
           { type: "separator" },

@@ -6,7 +6,6 @@ const store = new Store();
 export function initSettingsHandlers(
   getSettingsWindow: () => Electron.BrowserWindow | undefined
 ) {
-  // Set up IPC handlers for handlers
   ipcMain.handle("settings:getApiKey", () => {
     return store.get("apiKey") as string | undefined;
   });

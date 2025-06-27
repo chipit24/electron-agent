@@ -1,7 +1,23 @@
-import { CSSProperties, useState } from "react";
+import { CSSProperties, useState, useEffect } from "react";
 
 export function App() {
   const [message, setMessage] = useState("");
+  const [hasApiKey, setHasApiKey] = useState(false);
+
+  useEffect(() => {
+    (async function () {
+      const apiKeyExists = await window.agentApi.hasApiKey();
+      setHasApiKey(apiKeyExists);
+    })();
+
+    const unsubscribe = window.agentApi.onApiKeyChanged((hasApiKey) => {
+      setHasApiKey(hasApiKey);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   async function sendMessage() {
     if (!message.trim()) return;
@@ -23,20 +39,31 @@ export function App() {
         Electron Agent 🤖
       </h1>
 
-      <section className="grow p-2 shadow-md" />
+      <section className="grow p-2 shadow-md relative">
+        <p>Messages will appear here ...</p>
+      </section>
 
       <div className="flex gap-2 m-2">
-        <textarea
-          name="user-prompt"
-          rows={3}
-          className="w-full border rounded-md p-2"
-          placeholder="Enter your message here ..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
+        {hasApiKey ? (
+          <textarea
+            name="user-prompt"
+            rows={3}
+            className="w-full bg-white py-2 px-4 rounded-bl-md leading-5"
+            placeholder="Enter your message here ..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
+        ) : (
+          <p className="text-red-700 text-balance bg-white py-2 px-4 rounded-bl-md leading-5">
+            No API key is configured. Please set up your Mistral API key in the
+            settings to use the agent.
+          </p>
+        )}
+
         <button
+          disabled={!hasApiKey}
           type="button"
-          className="bg-amber-800 text-white text-lg px-8 py-2 rounded-lg cursor-pointer leading-none"
+          className="bg-amber-800 text-white text-lg px-8 py-2 rounded-lg cursor-pointer disabled:cursor-not-allowed leading-none"
           onClick={sendMessage}
         >
           Send message

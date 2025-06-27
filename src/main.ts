@@ -58,7 +58,7 @@ const createSettingsWindow = () => {
   }
 
   settingsWindow = new BrowserWindow({
-    width: 400,
+    width: 500,
     height: 300,
     resizable: false,
     minimizable: false,
@@ -101,7 +101,7 @@ const createSettingsWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  initAgentsHandlers();
+  initAgentsHandlers(() => mainWindow);
   initSettingsHandlers(() => settingsWindow);
 
   createWindow();
@@ -120,6 +120,16 @@ app.whenReady().then(() => {
           },
           { type: "separator" },
           { role: "quit" },
+        ],
+      },
+      {
+        label: "Edit",
+        submenu: [
+          { role: "cut" },
+          { role: "copy" },
+          { role: "paste" },
+          { type: "separator" },
+          { role: "selectall" },
         ],
       },
     ])

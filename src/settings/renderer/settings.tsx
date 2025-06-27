@@ -49,15 +49,27 @@ export function Settings() {
 
       <div className="flex flex-col my-auto p-2">
         <label htmlFor="apiKey" className="text-amber-800">
-          API Key
+          Mistral API Key
         </label>
         <input
+          aria-describedby="caption"
           type="text"
           name="apiKey"
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
           className="w-full py-2 px-3 bg-gray-50 rounded-lg border border-amber-500 text-amber-800 font-mono"
         />
+        <p id="caption" className="text-sm">
+          You can find your Mistral API key at{" "}
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://console.mistral.ai/api-keys"
+            className="text-blue-700"
+          >
+            console.mistral.ai/api-keys
+          </a>
+        </p>
       </div>
 
       <div className="flex gap-2 justify-between">

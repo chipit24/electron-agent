@@ -1,7 +1,14 @@
 import Store from "electron-store";
 import { ipcMain } from "electron";
 
-export const settingsStore = new Store();
+export const settingsStore = new Store({
+  schema: {
+    apiKey: {
+      type: "string",
+      default: "",
+    },
+  },
+});
 
 export function initSettingsHandlers(
   getSettingsWindow: () => Electron.BrowserWindow | undefined

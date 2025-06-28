@@ -127,7 +127,7 @@ export function App() {
           <textarea
             name="user-prompt"
             rows={4}
-            className="w-full bg-white p-2 rounded-md leading-5 resize-none"
+            className="w-full bg-white p-2 rounded-md leading-5 resize-none font-thin"
             placeholder="Type your message (⌘+return to send) ..."
             value={currentMessage}
             onChange={(e) => setCurrentMessage(e.target.value)}

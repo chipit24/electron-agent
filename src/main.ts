@@ -20,8 +20,8 @@ const createWindow = () => {
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1_000,
-    height: 700,
+    width: 750,
+    height: 850,
     titleBarStyle: "hiddenInset",
     webPreferences: {
       preload: path.join(__dirname, "main/preload.js"),

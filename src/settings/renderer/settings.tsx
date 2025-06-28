@@ -42,7 +42,7 @@ export function Settings() {
   }, []);
 
   return (
-    <main className="p-2 font-serif flex flex-col gap-2 min-h-dvh">
+    <main className="p-2 flex flex-col gap-2 min-h-dvh">
       <h1 className="text-lg font-semibold text-amber-800 text-center">
         Settings
       </h1>

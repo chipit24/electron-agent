@@ -39,28 +39,21 @@ export function App() {
       status: "sending",
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    const newMessages = [...messages, userMessage];
+
+    setMessages(newMessages);
     setCurrentMessage("");
     setIsLoading(true);
 
     try {
-      const response = await window.agentApi.sendMessage(currentMessage.trim());
+      const agentResponse = await window.agentApi.sendMessage(newMessages);
 
-      // Update user message status to sent
-      setMessages((prevMessages) =>
-        prevMessages.map((message) =>
-          message.id === userMessage.id
-            ? { ...message, status: "sent" }
-            : message
-        )
-      );
-
-      // Add AI response
-      setMessages((prev) => [
-        ...prev,
+      setMessages([
+        ...messages,
+        { ...userMessage, status: "sent" },
         {
           id: (Date.now() + 1).toString(),
-          content: response || "<Empty Response>",
+          content: agentResponse || "<Empty Response>",
           role: "assistant",
           timestamp: new Date(),
           status: "sent",
@@ -68,16 +61,11 @@ export function App() {
       ]);
     } catch (error) {
       console.error("Error sending message:", error);
-      // Update user message status to error
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === userMessage.id ? { ...msg, status: "error" } : msg
-        )
-      );
-    } finally {
-      setIsLoading(false);
+      setMessages([...messages, { ...userMessage, status: "error" }]);
     }
-  }, [currentMessage, isLoading]);
+
+    setIsLoading(false);
+  }, [messages, currentMessage, isLoading]);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -90,7 +78,7 @@ export function App() {
   );
 
   return (
-    <main className="flex flex-col h-dvh font-serif relative bg-amber-50">
+    <main className="flex flex-col h-dvh relative bg-amber-50">
       <div
         className="h-9 w-full absolute top-0 left-0 bg-amber-100 flex items-center justify-center"
         style={{ WebkitAppRegion: "drag" } as CSSProperties}
@@ -138,9 +126,9 @@ export function App() {
         {hasApiKey ? (
           <textarea
             name="user-prompt"
-            rows={3}
-            className="w-full bg-white py-2 px-4 rounded-bl-md leading-5 resize-none"
-            placeholder="Type your message..."
+            rows={4}
+            className="w-full bg-white p-2 rounded-md leading-5 resize-none"
+            placeholder="Type your message (⌘+return to send) ..."
             value={currentMessage}
             onChange={(e) => setCurrentMessage(e.target.value)}
             onKeyDown={handleKeyDown}

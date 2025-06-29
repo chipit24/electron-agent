@@ -42,13 +42,13 @@ export function Settings() {
   }, []);
 
   return (
-    <main className="p-2 flex flex-col gap-2 min-h-dvh">
-      <h1 className="text-lg font-semibold text-amber-800 text-center">
+    <main className="p-6 flex flex-col gap-4 min-h-dvh bg-gray-50">
+      <h1 className="text-xl font-semibold text-gray-900 text-center">
         Settings
       </h1>
 
-      <div className="flex flex-col my-auto p-2">
-        <label htmlFor="apiKey" className="text-amber-800">
+      <div className="flex flex-col my-auto p-4 bg-white rounded-xl border border-gray-200">
+        <label htmlFor="apiKey" className="text-gray-700 font-medium mb-2">
           Mistral API Key
         </label>
         <input
@@ -57,9 +57,9 @@ export function Settings() {
           name="apiKey"
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
-          className="w-full py-2 px-3 bg-gray-50 rounded-lg border border-amber-500 text-amber-800 font-mono"
+          className="w-full py-3 px-4 bg-white rounded-lg border border-gray-300 text-gray-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        <p id="caption" className="text-sm">
+        <p id="caption" className="text-sm text-gray-600 mt-2">
           You can find your Mistral API key at{" "}
           <a
             target="_blank"
@@ -75,13 +75,13 @@ export function Settings() {
       <div className="flex gap-2 justify-between">
         <button
           onClick={handleClose}
-          className="bg-gray-100 text-amber-800 text-lg px-8 py-2 rounded-lg cursor-pointer"
+          className="bg-gray-100 hover:bg-gray-200 text-gray-700 text-lg px-8 py-3 rounded-xl cursor-pointer transition-colors"
         >
           Cancel
         </button>
         <button
           onClick={handleSave}
-          className="bg-amber-800 text-white text-lg px-8 py-2 rounded-lg cursor-pointer"
+          className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-3 rounded-xl cursor-pointer transition-colors"
         >
           Save
         </button>

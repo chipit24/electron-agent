@@ -14,24 +14,24 @@ export function MessageBubble({ message }: { message: Message }) {
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
-        className={`max-w-md px-4 py-2 rounded-2xl ${
+        className={`max-w-md px-4 py-3 rounded-2xl ${
           isUser
-            ? `bg-amber-500 text-white ${
+            ? `bg-blue-600 text-white ${
                 isError
                   ? "bg-red-500"
                   : isSending
-                    ? "bg-amber-400"
-                    : "bg-amber-500"
+                    ? "bg-blue-400"
+                    : "bg-blue-600"
               } rounded-br-md`
-            : "bg-gray-200 text-gray-800 rounded-bl-md"
+            : "bg-gray-100 text-gray-900 rounded-bl-md"
         }`}
       >
-        <p className="whitespace-pre-wrap break-words font-thin">
+        <p className="whitespace-pre-wrap break-words">
           {message.content}
         </p>
         <p
-          className={`text-xs font-thin mt-1 ${
-            isUser ? "text-amber-100" : "text-gray-500"
+          className={`text-xs mt-1 ${
+            isUser ? "text-blue-100" : "text-gray-500"
           }`}
         >
           {message.timestamp.toLocaleTimeString([], {

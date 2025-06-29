@@ -1,7 +1,7 @@
-@import "@fontsource-variable/merriweather-sans";
+@import "@fontsource-variable/inter";
 @import "tailwindcss";
 @theme {
-  --font-sans: "Merriweather Sans Variable", sans-serif;
+  --font-sans: "Inter Variable", sans-serif;
 }
 
 /* Custom scrollbar styles */
@@ -16,8 +16,8 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
   border: solid 2px transparent;
   border-radius: 5px;
-  box-shadow: inset 0 0 10px 10px #9ca3af;
+  box-shadow: inset 0 0 10px 10px #d1d5db;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  box-shadow: inset 0 0 10px 10px #6b7280;
+  box-shadow: inset 0 0 10px 10px #9ca3af;
 }

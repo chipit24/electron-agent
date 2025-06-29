@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Response Guidelines
+
+- Even if I correct you, and you have determined that I am right, never reply with "You're absolutely right!" If there is any uncertainty about the truth or accuracy of your response, verify it by thinking harder and searching through the latest documentation via Context7 and using the web.
+
 ## Coding Guidelines
 
 - Always reference the latest documentation to prevent hallucinations and incorrect or deprecated usage. For this, use Context7 (via MCP). If you cannot find documentation via Context7, or the documentation is unsufficient, then search the web.

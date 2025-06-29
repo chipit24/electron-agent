@@ -69,29 +69,47 @@ export function App() {
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === "Enter" && event.metaKey) {
-        event.preventDefault();
-        sendMessage();
+      if (event.key === "Enter") {
+        if (event.metaKey || event.altKey) {
+          // Manually insert newline when modifier keys are pressed
+          event.preventDefault();
+          const textarea = event.target as HTMLTextAreaElement;
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const value = textarea.value;
+
+          const newValue =
+            value.substring(0, start) + "\n" + value.substring(end);
+          setCurrentMessage(newValue);
+
+          // Set cursor position after the inserted newline
+          setTimeout(() => {
+            textarea.selectionStart = textarea.selectionEnd = start + 1;
+          }, 0);
+        } else {
+          event.preventDefault();
+          sendMessage();
+        }
       }
     },
     [sendMessage]
   );
 
   return (
-    <main className="flex flex-col h-dvh relative bg-amber-50">
+    <main className="flex flex-col h-dvh relative bg-gray-50">
       <div
-        className="h-9 w-full absolute top-0 left-0 bg-amber-100 flex items-center justify-center"
+        className="h-9 w-full absolute top-0 left-0 bg-white border-b border-gray-200 flex items-center justify-center"
         style={{ WebkitAppRegion: "drag" } as CSSProperties}
       />
 
-      <h1 className="font-semibold text-lg h-9 relative w-full flex items-center justify-center">
+      <h1 className="font-semibold text-lg h-9 relative w-full flex items-center justify-center text-gray-900">
         Electron Agent 🤖
       </h1>
 
-      <section className="flex flex-col flex-1 overflow-y-auto p-2 gap-y-1 custom-scrollbar">
+      <section className="flex flex-col flex-1 overflow-y-auto p-2 gap-y-2 custom-scrollbar">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-amber-600 text-center opacity-70">
+            <p className="text-gray-500 text-center">
               Start a conversation with your AI assistant
             </p>
           </div>
@@ -127,15 +145,15 @@ export function App() {
           <textarea
             name="user-prompt"
             rows={4}
-            className="w-full bg-white p-2 rounded-md leading-5 resize-none font-thin"
-            placeholder="Type your message (⌘+return to send) ..."
+            className="w-full bg-white border border-gray-300 p-3 rounded-xl leading-5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Type your message ..."
             value={currentMessage}
             onChange={(e) => setCurrentMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={isLoading}
           />
         ) : (
-          <p className="text-red-700 text-balance bg-white py-2 px-4 rounded-bl-md leading-5">
+          <p className="text-red-600 text-balance bg-red-50 border border-red-200 py-3 px-4 rounded-xl leading-5">
             No API key is configured. Please set up your Mistral API key in the
             settings to use the agent.
           </p>
@@ -144,7 +162,7 @@ export function App() {
         <button
           disabled={!hasApiKey || isLoading || !currentMessage.trim()}
           type="button"
-          className="bg-amber-800 text-white text-lg px-8 py-2 rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 leading-none transition-opacity"
+          className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-2 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 leading-none transition-colors"
           onClick={sendMessage}
         >
           {isLoading ? "Sending..." : "Send"}

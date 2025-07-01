@@ -9,7 +9,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx .",
+    "lint": "eslint --ext .js,.ts,.tsx .",
     "format": "prettier . --write",
     "type-check": "npm run type-check:renderer && npm run type-check:node",
     "type-check:renderer": "tsc --noEmit --project tsconfig.renderer.json",

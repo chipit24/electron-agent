@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Always reference the latest documentation to prevent hallucinations and incorrect or deprecated usage. For this, use Context7 (via MCP). If you cannot find documentation via Context7, or the documentation is unsufficient, then search the web.
   - Context7 has documentation for Electron at `electron/electron` and for Electron Forge at `electron-forge/electron-forge-docs`.
+- I make use of https://github.com/mistralai/client-ts (`@mistralai/mistralai`). You can find the latest documentation for it on its GitHub page, linked previously, as well as at https://docs.mistral.ai/, and via Context7 at `mistralai/client-ts`.
 
 ## Project Overview
 
@@ -20,24 +21,29 @@ This is an Electron application built with TypeScript, React, and Vite. The app 
 This application uses a **multi-window architecture** with separate processes for different concerns:
 
 ### Main Process (`src/main.ts`)
+
 - Creates two BrowserWindow instances: main chat window (750x850) and settings modal (500x300)
 - Implements macOS-style `hiddenInset` title bar
 - Configures application menu with Settings shortcut (Cmd+,)
 - Handles window lifecycle and IPC communication
 
 ### Preload Scripts (Security Bridge)
+
 - **Main Preload** (`src/main/preload.ts`): Exposes `agentApi` for AI chat functionality
 - **Settings Preload** (`src/settings/preload.ts`): Exposes `settingsApi` for configuration management
 
 ### Renderer Processes (React Frontend)
+
 - **Main Window** (`src/main/renderer/`): Chat interface with message bubbles and real-time status
 - **Settings Window** (`src/settings/renderer/`): API key configuration form
 
 ### IPC Handlers
+
 - **Agent Handlers** (`src/main/handlers.ts`): Manages Mistral AI integration with `devstral-small-latest` model
 - **Settings Handlers** (`src/settings/handlers.ts`): Uses electron-store for persistent configuration
 
 ### Build System
+
 Uses Vite with multiple entry points for different processes and preload scripts
 
 ## Common Commands

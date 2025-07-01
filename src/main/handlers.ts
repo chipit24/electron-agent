@@ -1,6 +1,7 @@
 import { ipcMain } from "electron";
 import { Mistral } from "@mistralai/mistralai";
 import { settingsStore } from "../settings/handlers";
+import coderSystemPrompt from "./coderSystemPrompt.txt?raw";
 
 let client: Mistral | undefined;
 
@@ -42,8 +43,7 @@ export function initAgentsHandlers(
       messages: [
         {
           role: "system",
-          content:
-            "You are a professional software consultant and coding expert, providing users with accurate, up-to-date programming help that follows best practises and clean code.",
+          content: coderSystemPrompt,
         },
         ...messages,
       ],

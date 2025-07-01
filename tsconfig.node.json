@@ -13,7 +13,7 @@
     "outDir": "dist",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": ["node", "vite/client"]
   },
   "include": ["src/**/*.ts", "*.config.*", "forge.env.d.ts"],
   "exclude": ["node_modules", "src/settings/renderer", "src/main/renderer"]

@@ -26,9 +26,7 @@ export function MessageBubble({ message }: { message: Message }) {
             : "bg-gray-100 text-gray-900 rounded-bl-md"
         }`}
       >
-        <p className="whitespace-pre-wrap break-words">
-          {message.content}
-        </p>
+        <p className="whitespace-pre-wrap break-words">{message.content}</p>
         <p
           className={`text-xs mt-1 ${
             isUser ? "text-blue-100" : "text-gray-500"

@@ -59,7 +59,7 @@ const createSettingsWindow = () => {
 
   settingsWindow = new BrowserWindow({
     width: 500,
-    height: 300,
+    height: 600,
     resizable: false,
     minimizable: false,
     maximizable: false,

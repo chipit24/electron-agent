@@ -7,6 +7,10 @@ export const settingsStore = new Store({
       type: "string",
       default: "",
     },
+    projectDirectory: {
+      type: "string",
+      default: "",
+    },
   },
 });
 
@@ -20,6 +24,17 @@ export function initSettingsHandlers(
   ipcMain.handle("settings:setApiKey", (_event, apiKey: string) => {
     settingsStore.set("apiKey", apiKey);
   });
+
+  ipcMain.handle("settings:getProjectDirectory", () => {
+    return settingsStore.get("projectDirectory") as string | undefined;
+  });
+
+  ipcMain.handle(
+    "settings:setProjectDirectory",
+    (_event, projectDirectory: string) => {
+      settingsStore.set("projectDirectory", projectDirectory);
+    }
+  );
 
   ipcMain.handle("settings:closeWindow", () => {
     const settingsWindow = getSettingsWindow();

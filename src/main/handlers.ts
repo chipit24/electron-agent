@@ -1,9 +1,10 @@
 import { ipcMain } from "electron";
 import { Mistral } from "@mistralai/mistralai";
 import { settingsStore } from "../settings/handlers";
-import coderSystemPrompt from "./coderSystemPrompt.txt?raw";
+import { Conversation } from "./conversation";
 
 let client: Mistral | undefined;
+const conversation = new Conversation();
 
 export function initAgentsHandlers(
   getMainWindow: () => Electron.BrowserWindow | undefined
@@ -31,24 +32,16 @@ export function initAgentsHandlers(
     return Boolean(settingsStore.get("apiKey"));
   });
 
-  ipcMain.handle("agent:handleMessage", async (_event, messages) => {
+  ipcMain.handle("agent:handleMessage", (_event, userMessage: string) => {
     if (!client) {
       return;
     }
 
-    const chatResponse = await client.chat.complete({
-      /* Currently points to `devstral-small-2505`.
-       * See https://docs.mistral.ai/getting-started/models/models_overview for full details. */
-      model: "devstral-small-latest",
-      messages: [
-        {
-          role: "system",
-          content: coderSystemPrompt,
-        },
-        ...messages,
-      ],
-    });
-
-    return chatResponse.choices[0].message.content;
+    try {
+      return conversation.sendMessage(client, userMessage);
+    } catch (error) {
+      console.error("Error in conversation.sendMessage:", error);
+      throw error;
+    }
   });
 }

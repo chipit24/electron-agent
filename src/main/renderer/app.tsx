@@ -39,21 +39,22 @@ export function App() {
       status: "sending",
     };
 
-    const newMessages = [...messages, userMessage];
-
-    setMessages(newMessages);
+    /* Add the new message to the screen right away, with a status of "sending" */
+    setMessages([...messages, userMessage]);
     setCurrentMessage("");
     setIsLoading(true);
 
     try {
-      const agentResponse = await window.agentApi.sendMessage(newMessages);
+      const agentResponse = await window.agentApi.sendMessage(
+        currentMessage.trim()
+      );
 
       setMessages([
         ...messages,
         { ...userMessage, status: "sent" },
         {
-          id: (Date.now() + 1).toString(),
-          content: agentResponse || "<Empty Response>",
+          id: Date.now().toString(),
+          content: agentResponse,
           role: "assistant",
           timestamp: new Date(),
           status: "sent",

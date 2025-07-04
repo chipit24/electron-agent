@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.6",
+    "@heroicons/react": "^2.2.0",
     "@mistralai/mistralai": "^1.7.2",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^10.1.0",

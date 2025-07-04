@@ -7,6 +7,7 @@ import {
 } from "react";
 import { type Message, MessageBubble } from "./message-bubble";
 import MistralLogo from "./mistral-logo.svg?inline";
+import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 
 type TokenUsage = {
   promptTokens: number;
@@ -174,7 +175,7 @@ export function App() {
         )}
       </section>
 
-      <div className="flex gap-2 m-2">
+      <div className="flex gap-2 m-2 items-end">
         {hasApiKey ? (
           <textarea
             name="user-prompt"
@@ -196,10 +197,10 @@ export function App() {
         <button
           disabled={!hasApiKey || isLoading || !currentMessage.trim()}
           type="button"
-          className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-2 rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 leading-none transition-colors"
+          className="bg-blue-600 not-disabled:hover:bg-blue-700 text-white size-11.5 rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 transition-colors flex items-center justify-center shrink"
           onClick={sendMessage}
         >
-          {isLoading ? "Sending..." : "Send"}
+          <PaperAirplaneIcon className="size-5" />
         </button>
       </div>
 

@@ -33,7 +33,10 @@ export class Conversation {
 
     const toolCall = message?.toolCalls?.[0];
     if (!toolCall) {
-      return message.content;
+      return {
+        content: message.content,
+        usage: chatResponse.usage,
+      };
     }
 
     this.add({
@@ -53,6 +56,9 @@ export class Conversation {
       this.add({ ...toolMessage, role: "assistant" });
     }
 
-    return toolMessage?.content;
+    return {
+      content: toolMessage?.content,
+      usage: toolResponse.usage,
+    };
   }
 }

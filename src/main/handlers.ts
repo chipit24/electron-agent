@@ -32,6 +32,14 @@ export function initAgentsHandlers(
     return Boolean(settingsStore.get("apiKey"));
   });
 
+  ipcMain.handle("agent:getMaxContextLength", async () => {
+    const modelCard = await client?.models?.retrieve({
+      modelId: "devstral-small-latest",
+    });
+
+    return modelCard?.maxContextLength;
+  });
+
   ipcMain.handle("agent:handleMessage", (_event, userMessage: string) => {
     if (!client) {
       return;

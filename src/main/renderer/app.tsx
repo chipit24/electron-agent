@@ -6,15 +6,40 @@ import {
   type KeyboardEvent,
 } from "react";
 import { type Message, MessageBubble } from "./message-bubble";
+import MistralLogo from "./mistral-logo.svg?inline";
+
+type TokenUsage = {
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+};
+
+type MessageResponse = {
+  content: string;
+  usage: TokenUsage;
+};
 
 export function App() {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [hasApiKey, setHasApiKey] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [tokenUsage, setTokenUsage] = useState<TokenUsage>();
+  const [maxTokens, setMaxTokens] = useState<number>();
 
   useEffect(() => {
-    (async function () {
+    const getMaxContextLength = async () => {
+      const maxContextLength = await window.agentApi.getMaxContextLength();
+      setMaxTokens(maxContextLength);
+    };
+
+    if (hasApiKey) {
+      getMaxContextLength();
+    }
+  }, [hasApiKey]);
+
+  useEffect(() => {
+    (async () => {
       const apiKeyExists = await window.agentApi.hasApiKey();
       setHasApiKey(apiKeyExists);
     })();
@@ -45,16 +70,18 @@ export function App() {
     setIsLoading(true);
 
     try {
-      const agentResponse = await window.agentApi.sendMessage(
+      const response = (await window.agentApi.sendMessage(
         currentMessage.trim()
-      );
+      )) as MessageResponse;
+
+      setTokenUsage(response.usage);
 
       setMessages([
         ...messages,
         { ...userMessage, status: "sent" },
         {
           id: Date.now().toString(),
-          content: agentResponse,
+          content: response.content,
           role: "assistant",
           timestamp: new Date(),
           status: "sent",
@@ -67,6 +94,12 @@ export function App() {
 
     setIsLoading(false);
   }, [messages, currentMessage, isLoading]);
+
+  const calculateRows = useCallback((text: string) => {
+    if (!text) return 1;
+    const lines = text.split("\n").length;
+    return Math.min(lines, 5); // Cap at 5 rows for reasonable UI
+  }, []);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -145,8 +178,8 @@ export function App() {
         {hasApiKey ? (
           <textarea
             name="user-prompt"
-            rows={4}
-            className="w-full bg-white border border-gray-300 p-3 rounded-xl leading-5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            rows={calculateRows(currentMessage)}
+            className="w-full bg-white border border-gray-300 p-3 rounded-lg leading-5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent custom-scrollbar"
             placeholder="Type your message ..."
             value={currentMessage}
             onChange={(e) => setCurrentMessage(e.target.value)}
@@ -154,7 +187,7 @@ export function App() {
             disabled={isLoading}
           />
         ) : (
-          <p className="text-red-600 text-balance bg-red-50 border border-red-200 py-3 px-4 rounded-xl leading-5">
+          <p className="text-red-600 text-balance bg-red-50 border border-red-200 py-3 px-4 rounded-lg leading-5">
             No API key is configured. Please set up your Mistral API key in the
             settings to use the agent.
           </p>
@@ -163,12 +196,40 @@ export function App() {
         <button
           disabled={!hasApiKey || isLoading || !currentMessage.trim()}
           type="button"
-          className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-2 rounded-xl cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 leading-none transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-2 rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 leading-none transition-colors"
           onClick={sendMessage}
         >
           {isLoading ? "Sending..." : "Send"}
         </button>
       </div>
+
+      {maxTokens != null && (
+        <div className="text-xs text-gray-500 bg-gray-100 px-3 py-2 border-t border-gray-200 flex items-center justify-between gap-2">
+          <div>
+            {tokenUsage ? tokenUsage.totalTokens.toLocaleString() : "0"} /{" "}
+            {maxTokens.toLocaleString()} |{" "}
+            {tokenUsage
+              ? (
+                  ((maxTokens - tokenUsage.totalTokens) / maxTokens) *
+                  100
+                ).toFixed(2)
+              : "100.00"}
+            % of context remaining
+          </div>
+          <div className="flex gap-1 items-center">
+            Powered by
+            <a
+              href="https://mistral.ai/news/devstral"
+              target="_blank"
+              rel="noreferrer"
+              className="text-[#FF8205] flex items-center gap-1"
+            >
+              Devstral
+              <img src={MistralLogo} alt="Mistral logo" className="h-4" />
+            </a>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

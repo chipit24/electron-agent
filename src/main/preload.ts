@@ -15,6 +15,9 @@ const agentApi = {
     ipcRenderer.on("agent:apiKeyChanged", listener);
     return () => ipcRenderer.off("agent:apiKeyChanged", listener);
   },
+  getMaxContextLength: (): Promise<number> => {
+    return ipcRenderer.invoke("agent:getMaxContextLength");
+  },
 };
 contextBridge.exposeInMainWorld("agentApi", agentApi);
 export type AgentApi = typeof agentApi;

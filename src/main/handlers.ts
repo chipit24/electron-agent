@@ -1,26 +1,21 @@
 import { ipcMain } from "electron";
-import { Mistral } from "@mistralai/mistralai";
 import { settingsStore } from "../settings/handlers";
 import { Conversation } from "./conversation";
 
-let client: Mistral | undefined;
-const conversation = new Conversation();
+let conversation: Conversation;
 
 export function initAgentsHandlers(
   getMainWindow: () => Electron.BrowserWindow | undefined
 ) {
   const apiKey = settingsStore.get("apiKey") as string | undefined;
-  if (apiKey) {
-    client = new Mistral({ apiKey });
-  }
+  conversation = new Conversation(apiKey);
+
   settingsStore.onDidChange("apiKey", (newApiKey, prevApiKey) => {
     if (prevApiKey === newApiKey) {
       return;
     }
 
-    client = newApiKey
-      ? new Mistral({ apiKey: newApiKey as string })
-      : undefined;
+    conversation.setApiKey(newApiKey as string);
 
     getMainWindow()?.webContents?.send(
       "agent:apiKeyChanged",
@@ -33,20 +28,16 @@ export function initAgentsHandlers(
   });
 
   ipcMain.handle("agent:getMaxContextLength", async () => {
-    const modelCard = await client?.models?.retrieve({
-      modelId: "devstral-small-latest",
-    });
-
-    return modelCard?.maxContextLength;
+    return conversation.getMaxContentLength();
   });
 
   ipcMain.handle("agent:handleMessage", (_event, userMessage: string) => {
-    if (!client) {
+    if (!conversation) {
       return;
     }
 
     try {
-      return conversation.sendMessage(client, userMessage);
+      return conversation.sendMessage(userMessage);
     } catch (error) {
       console.error("Error in conversation.sendMessage:", error);
       throw error;

@@ -1,7 +1,17 @@
 import { Mistral } from "@mistralai/mistralai";
-import type { ChatCompletionStreamRequestMessages } from "@mistralai/mistralai/models/components";
+import type {
+  ChatCompletionStreamRequestMessages,
+  ToolCall,
+  UsageInfo,
+} from "@mistralai/mistralai/models/components";
 import coderSystemPrompt from "./coderSystemPrompt.txt?raw";
 import { toolMap, tools } from "./tools/llmTools";
+
+export type ConversationMessageResponse = {
+  content: string;
+  usage: UsageInfo;
+  toolCall?: { description: string };
+};
 
 export class Conversation {
   static model = "devstral-small-latest" as const;
@@ -10,6 +20,7 @@ export class Conversation {
   #messages: ChatCompletionStreamRequestMessages[] = [
     { role: "system", content: coderSystemPrompt },
   ];
+  #pendingToolCall: ToolCall | undefined;
 
   constructor(apiKey?: string) {
     this.#client = new Mistral({ apiKey });
@@ -46,9 +57,27 @@ export class Conversation {
 
   add(message: ChatCompletionStreamRequestMessages) {
     this.#messages.push(message);
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log("\n<Messages>");
+      console.log(
+        JSON.stringify(
+          this.#messages.map((m) => ({
+            ...m,
+            content:
+              typeof m.content === "string" && m.content.length > 30
+                ? m.content.substring(0, 30) + "..."
+                : m.content,
+          })),
+          null,
+          2
+        )
+      );
+      console.log("</Messages>");
+    }
   }
 
-  async sendMessage(userMessage: string) {
+  async sendMessage(userMessage: string): Promise<ConversationMessageResponse> {
     this.add({
       role: "user",
       content: userMessage,
@@ -59,32 +88,42 @@ export class Conversation {
     const message = chatResponse.choices[0]?.message;
     this.add({ ...message, role: "assistant" });
 
-    const toolCall = message?.toolCalls?.[0];
-    if (!toolCall) {
-      return {
-        content: message.content,
-        usage: chatResponse.usage,
-      };
-    }
+    const toolCall = message.toolCalls?.[0];
+    this.#pendingToolCall = toolCall;
+    return {
+      content: message.content as string,
+      usage: chatResponse.usage,
+      toolCall: toolCall
+        ? {
+            description: `${toolCall.function.name}(${toolCall.function.arguments})`,
+          }
+        : undefined,
+    };
+  }
 
-    /* TODO: Prompt the user to either accept or reject tool call */
+  async executeToolCall(accept: boolean): Promise<ConversationMessageResponse> {
+    const toolCall = this.#pendingToolCall;
+    this.#pendingToolCall = undefined;
+
+    if (!toolCall) {
+      throw new Error("No pending tool call");
+    }
 
     this.add({
       role: "tool",
-      content: await toolMap[toolCall.function.name](),
-      toolCallId: toolCall.id,
       name: toolCall.function.name,
+      content: accept
+        ? await toolMap[toolCall.function.name]()
+        : "This tool call was successfully processed, but the user rejected executing it, so you cannot access the result. You may acknowledge that the user rejected the previous tool call and ask if they want to re-try it or do something else.",
+      toolCallId: toolCall.id,
     });
 
     const toolResponse = await this.generateCompletion();
-
     const toolMessage = toolResponse.choices[0]?.message;
-    if (toolMessage) {
-      this.add({ ...toolMessage, role: "assistant" });
-    }
+    this.add({ ...toolMessage, role: "assistant" });
 
     return {
-      content: toolMessage?.content,
+      content: toolMessage.content as string,
       usage: toolResponse.usage,
     };
   }

@@ -15,16 +15,11 @@ type TokenUsage = {
   totalTokens: number;
 };
 
-type MessageResponse = {
-  content: string;
-  usage: TokenUsage;
-};
-
 export function App() {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [hasApiKey, setHasApiKey] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [tokenUsage, setTokenUsage] = useState<TokenUsage>();
   const [maxTokens, setMaxTokens] = useState<number>();
 
@@ -43,6 +38,7 @@ export function App() {
     (async () => {
       const apiKeyExists = await window.agentApi.hasApiKey();
       setHasApiKey(apiKeyExists);
+      setIsLoading(false);
     })();
 
     const unsubscribe = window.agentApi.onApiKeyChanged((hasApiKey) => {
@@ -71,22 +67,25 @@ export function App() {
     setIsLoading(true);
 
     try {
-      const response = (await window.agentApi.sendMessage(
-        currentMessage.trim()
-      )) as MessageResponse;
+      const response = await window.agentApi.sendMessage(currentMessage.trim());
 
       setTokenUsage(response.usage);
+
+      const assistantMessage: Message = {
+        id: Date.now().toString(),
+        content: response.content,
+        role: "assistant",
+        timestamp: new Date(),
+        status: "sent",
+        toolCall: response.toolCall
+          ? { status: "pending", description: response.toolCall.description }
+          : undefined,
+      };
 
       setMessages([
         ...messages,
         { ...userMessage, status: "sent" },
-        {
-          id: Date.now().toString(),
-          content: response.content,
-          role: "assistant",
-          timestamp: new Date(),
-          status: "sent",
-        },
+        assistantMessage,
       ]);
     } catch (error) {
       console.error("Error sending message:", error);
@@ -95,6 +94,58 @@ export function App() {
 
     setIsLoading(false);
   }, [messages, currentMessage, isLoading]);
+
+  const handleToolCall = useCallback(
+    async (approve: boolean) => {
+      if (isLoading) return;
+
+      const lastMessage = messages[messages.length - 1];
+      if (!lastMessage.toolCall) {
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const response = await window.agentApi.executeToolCall(approve);
+        setTokenUsage(response.usage);
+
+        const updatedToolCallMessage: Message = {
+          ...lastMessage,
+          toolCall: {
+            ...lastMessage.toolCall,
+            status: approve ? "approved" : "rejected",
+          },
+        };
+
+        const toolResultMessage: Message = {
+          id: Date.now().toString(),
+          content: response.content,
+          role: "assistant",
+          timestamp: new Date(),
+          status: "sent",
+        };
+
+        setMessages(
+          messages.toSpliced(-1, 1, updatedToolCallMessage, toolResultMessage)
+        );
+      } catch (error) {
+        console.error("Error executing tool call:", error);
+        const updatedToolCallMessage: Message = {
+          ...lastMessage,
+          status: "error",
+          toolCall: {
+            ...lastMessage.toolCall,
+            status: "pending",
+          },
+        };
+        setMessages(messages.toSpliced(-1, 1, updatedToolCallMessage));
+      }
+
+      setIsLoading(false);
+    },
+    [messages, isLoading]
+  );
 
   const calculateRows = useCallback((text: string) => {
     if (!text) return 1;
@@ -150,7 +201,11 @@ export function App() {
           </div>
         ) : (
           messages.map((message) => (
-            <MessageBubble key={message.id} message={message} />
+            <MessageBubble
+              key={message.id}
+              message={message}
+              onHandleToolCall={handleToolCall}
+            />
           ))
         )}
 
@@ -204,33 +259,31 @@ export function App() {
         </button>
       </div>
 
-      {maxTokens != null && (
-        <div className="text-xs text-gray-500 bg-gray-100 px-3 py-2 border-t border-gray-200 flex items-center justify-between gap-2">
-          <div>
-            {tokenUsage ? tokenUsage.totalTokens.toLocaleString() : "0"} /{" "}
-            {maxTokens.toLocaleString()} |{" "}
-            {tokenUsage
-              ? (
-                  ((maxTokens - tokenUsage.totalTokens) / maxTokens) *
-                  100
-                ).toFixed(2)
-              : "100.00"}
-            % of context remaining
-          </div>
-          <div className="flex gap-1 items-center">
-            Powered by
-            <a
-              href="https://mistral.ai/news/devstral"
-              target="_blank"
-              rel="noreferrer"
-              className="text-[#FF8205] flex items-center gap-1"
-            >
-              Devstral
-              <img src={MistralLogo} alt="Mistral logo" className="h-4" />
-            </a>
-          </div>
+      <div className="text-xs text-gray-500 bg-gray-100 px-3 py-2 border-t border-gray-200 flex items-center justify-between gap-2">
+        <div>
+          {tokenUsage ? tokenUsage.totalTokens.toLocaleString() : "0"} /{" "}
+          {maxTokens?.toLocaleString() || "--"} |{" "}
+          {tokenUsage && maxTokens
+            ? (
+                ((maxTokens - tokenUsage.totalTokens) / maxTokens) *
+                100
+              ).toFixed(2)
+            : "100.00"}
+          % of context remaining
         </div>
-      )}
+        <div className="flex gap-1 items-center">
+          Powered by
+          <a
+            href="https://mistral.ai/news/devstral"
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#FF8205] flex items-center gap-1"
+          >
+            Devstral
+            <img src={MistralLogo} alt="Mistral logo" className="h-4" />
+          </a>
+        </div>
+      </div>
     </main>
   );
 }

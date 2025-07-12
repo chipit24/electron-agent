@@ -43,4 +43,17 @@ export function initAgentsHandlers(
       throw error;
     }
   });
+
+  ipcMain.handle("agent:executeToolCall", (_event, approve: boolean) => {
+    if (!conversation) {
+      return;
+    }
+
+    try {
+      return conversation.executeToolCall(approve);
+    } catch (error) {
+      console.error("Error in conversation.executeToolCall:", error);
+      throw error;
+    }
+  });
 }

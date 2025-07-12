@@ -13,6 +13,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - I make use of https://github.com/mistralai/client-ts (`@mistralai/mistralai`). You can find the latest documentation for it on its GitHub page, linked previously, as well as at https://docs.mistral.ai/, and via Context7 at `mistralai/client-ts`.
 - Avoid redundant comments that just repeat what the code already explains.
 - Prefer types over interfaces.
+- Prefer using `/* */` for comments that act as documentation, and reserve `//` for commenting out actual code (even if multiple lines long). If the documentation comment is very long, split it over multiple lines like this:
+  - ```typescript
+    /* This is the first line of the comment.
+     * This is the second line of the comment. */
+    ```
 
 ## Project Overview
 

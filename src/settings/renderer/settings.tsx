@@ -98,7 +98,8 @@ export function Settings() {
             className="w-full py-3 px-4 bg-white rounded-lg border border-gray-300 text-gray-900 font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <p id="projectDirCaption" className="text-sm text-gray-600 mt-2">
-            Set the default directory for your project files
+            This is the default directory Electron Agent 🤖 will scope its
+            commands to.
           </p>
         </div>
       </div>

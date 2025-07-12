@@ -93,6 +93,12 @@ const createSettingsWindow = () => {
     );
   }
 
+  // Open external links in default browser
+  settingsWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url);
+    return { action: "deny" };
+  });
+
   // Clean up reference when window is closed
   settingsWindow.on("closed", () => {
     settingsWindow = undefined;

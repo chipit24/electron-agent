@@ -1,4 +1,4 @@
-import { Tool } from "@mistralai/mistralai/models/components";
+import type { Tool } from "@mistralai/mistralai/models/components";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { settingsStore } from "../../settings/handlers.js";

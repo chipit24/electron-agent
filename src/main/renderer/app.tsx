@@ -1,5 +1,5 @@
 import {
-  CSSProperties,
+  type CSSProperties,
   useState,
   useEffect,
   useCallback,

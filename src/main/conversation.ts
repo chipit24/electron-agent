@@ -90,6 +90,13 @@ export class Conversation {
 
     const toolCall = message.toolCalls?.[0];
     this.#pendingToolCall = toolCall;
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log("\n<ToolCall>");
+      console.log(JSON.stringify(toolCall, null, 2));
+      console.log("</ToolCall>");
+    }
+
     return {
       content: message.content as string,
       usage: chatResponse.usage,
@@ -113,7 +120,7 @@ export class Conversation {
       role: "tool",
       name: toolCall.function.name,
       content: accept
-        ? await toolMap[toolCall.function.name]()
+        ? await toolMap[toolCall.function.name](toolCall.function.arguments)
         : "This tool call was successfully processed, but the user rejected executing it, so you cannot access the result. You may acknowledge that the user rejected the previous tool call and ask if they want to re-try it or do something else.",
       toolCallId: toolCall.id,
     });

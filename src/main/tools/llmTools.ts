@@ -2,6 +2,7 @@ import { Tool } from "@mistralai/mistralai/models/components";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
 import { settingsStore } from "../../settings/handlers.js";
+import { type FunctionCall } from "@mistralai/mistralai/src/models/components/functioncall";
 
 export const tools: Tool[] = [
   {
@@ -14,7 +15,10 @@ export const tools: Tool[] = [
   },
 ];
 
-export const toolMap: Record<string, () => Promise<string>> = {
+export const toolMap: Record<
+  string,
+  (args: FunctionCall["arguments"]) => Promise<string>
+> = {
   async listFilesInProject() {
     const projectRoot = settingsStore.get("projectDirectory") as string;
     if (!projectRoot) {

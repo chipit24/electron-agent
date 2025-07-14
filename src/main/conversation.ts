@@ -5,7 +5,7 @@ import type {
   UsageInfo,
 } from "@mistralai/mistralai/models/components";
 import coderSystemPrompt from "./coderSystemPrompt.txt?raw";
-import { toolMap, tools } from "./tools/llmTools";
+import { toolMap, agentToolList } from "./tools/llmTools";
 
 export type ConversationMessageResponse = {
   content: string;
@@ -42,7 +42,7 @@ export class Conversation {
     const completion = await this.#client.chat.complete({
       model: Conversation.model,
       parallelToolCalls: false,
-      tools,
+      tools: agentToolList,
       messages: this.#messages,
     });
 
@@ -91,7 +91,7 @@ export class Conversation {
     const toolCall = message.toolCalls?.[0];
     this.#pendingToolCall = toolCall;
 
-    if (process.env.NODE_ENV !== "production") {
+    if (toolCall !== undefined && process.env.NODE_ENV !== "production") {
       console.log("\n<ToolCall>");
       console.log(JSON.stringify(toolCall, null, 2));
       console.log("</ToolCall>");

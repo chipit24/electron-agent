@@ -1,63 +1,30 @@
 import type { Tool } from "@mistralai/mistralai/models/components";
-import { readdir } from "node:fs/promises";
-import path from "node:path";
-import { settingsStore } from "../../settings/handlers.js";
 import { type FunctionCall } from "@mistralai/mistralai/src/models/components/functioncall";
+import * as listAllFilesAndFoldersInProject from "./listAllFilesAndFoldersInProject";
 
-export const tools: Tool[] = [
-  {
-    type: "function",
-    function: {
-      name: "listFilesInProject",
-      description: "List all files in the project directory",
-      parameters: {},
+/* When adding a new tool, import it above and add it to this list.
+ * You should not have to modify `toolMap` or `agentToolList`; they are derived from this list */
+const tools = [listAllFilesAndFoldersInProject];
+
+export const toolMap = tools.reduce(
+  (map, { tool, metadata }) => {
+    map[metadata.name] = tool;
+    return map;
+  },
+  {} as Record<string, (args: FunctionCall["arguments"]) => Promise<string>>
+);
+
+export const agentToolList: Tool[] = tools.map(({ metadata }) => ({
+  type: "function",
+  function: {
+    name: metadata.name,
+    description: metadata.description,
+    parameters: {
+      type: "object",
+      properties: {
+        ...metadata.params,
+      },
+      required: [...metadata.requiredParams],
     },
   },
-];
-
-export const toolMap: Record<
-  string,
-  (args: FunctionCall["arguments"]) => Promise<string>
-> = {
-  async listFilesInProject() {
-    const projectRoot = settingsStore.get("projectDirectory") as string;
-    if (!projectRoot) {
-      return JSON.stringify({ error: "Project directory not set in settings" });
-    }
-
-    try {
-      const files = await getAllFiles(projectRoot);
-      return JSON.stringify(files);
-    } catch (error) {
-      return JSON.stringify({
-        error: `Failed to read directory: ${error instanceof Error ? error.message : String(error)}`,
-      });
-    }
-  },
-};
-
-async function getAllFiles(dir: string, relativePath = ""): Promise<string[]> {
-  const entries = await readdir(dir, { withFileTypes: true });
-  const files: string[] = [];
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    const relativeEntryPath = path.join(relativePath, entry.name);
-
-    if (entry.isDirectory()) {
-      // Skip common directories that shouldn't be included
-      if (
-        ["node_modules", ".git", "dist", "out", ".vscode"].includes(entry.name)
-      ) {
-        continue;
-      }
-      files.push(relativeEntryPath + "/");
-      const subFiles = await getAllFiles(fullPath, relativeEntryPath);
-      files.push(...subFiles);
-    } else {
-      files.push(relativeEntryPath);
-    }
-  }
-
-  return files;
-}
+}));

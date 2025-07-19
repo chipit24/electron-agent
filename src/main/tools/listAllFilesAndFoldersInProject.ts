@@ -1,22 +1,17 @@
-import { settingsStore } from "../../settings/handlers";
 import { readdir } from "node:fs/promises";
 import path from "node:path";
+import type { Tool } from "../conversation";
 
-export async function tool() {
-  const projectRoot = settingsStore.get("projectDirectory") as string;
-  if (!projectRoot) {
-    return JSON.stringify({ error: "Project directory not set in settings" });
-  }
-
+export const tool: Tool = async ({ projectRoot }) => {
   try {
     const files = await getAllFiles(projectRoot);
-    return JSON.stringify(files);
+    return JSON.stringify({ files });
   } catch (error) {
     return JSON.stringify({
       error: `Failed to read directory: ${error instanceof Error ? error.message : String(error)}`,
     });
   }
-}
+};
 
 export const metadata = {
   name: "listAllFilesAndFoldersInProject",

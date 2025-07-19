@@ -68,7 +68,6 @@ export function App() {
 
     try {
       const response = await window.agentApi.sendMessage(currentMessage.trim());
-
       setTokenUsage(response.usage);
 
       const assistantMessage: Message = {
@@ -124,6 +123,9 @@ export function App() {
           role: "assistant",
           timestamp: new Date(),
           status: "sent",
+          toolCall: response.toolCall
+            ? { status: "pending", description: response.toolCall.description }
+            : undefined,
         };
 
         setMessages(

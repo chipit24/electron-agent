@@ -6,12 +6,17 @@ import type {
 } from "@mistralai/mistralai/models/components";
 import coderSystemPrompt from "./coderSystemPrompt.txt?raw";
 import { toolMap, agentToolList } from "./tools/llmTools";
+import { settingsStore } from "../settings/handlers";
 
 export type ConversationMessageResponse = {
   content: string;
   usage: UsageInfo;
   toolCall?: { description: string };
 };
+
+export type Tool<
+  Params extends Record<string, unknown> = Record<string, unknown>,
+> = (args: { projectRoot: string } & Params) => Promise<string>;
 
 export class Conversation {
   static model = "devstral-small-latest" as const;
@@ -38,7 +43,7 @@ export class Conversation {
     return modelCard.maxContextLength;
   }
 
-  async generateCompletion() {
+  async #generateCompletion() {
     const completion = await this.#client.chat.complete({
       model: Conversation.model,
       parallelToolCalls: false,
@@ -52,7 +57,27 @@ export class Conversation {
       console.log("</Completion>");
     }
 
-    return completion;
+    const message = completion.choices[0]?.message;
+    this.add({ ...message, role: "assistant" });
+
+    const toolCall = message.toolCalls?.[0];
+    this.#pendingToolCall = toolCall;
+
+    if (toolCall !== undefined && process.env.NODE_ENV !== "production") {
+      console.log("\n<ToolCall>");
+      console.log(JSON.stringify(toolCall, null, 2));
+      console.log("</ToolCall>");
+    }
+
+    return {
+      content: message.content as string,
+      usage: completion.usage,
+      toolCall: toolCall
+        ? {
+            description: `${toolCall.function.name}(${toolCall.function.arguments})`,
+          }
+        : undefined,
+    };
   }
 
   add(message: ChatCompletionStreamRequestMessages) {
@@ -77,35 +102,13 @@ export class Conversation {
     }
   }
 
-  async sendMessage(userMessage: string): Promise<ConversationMessageResponse> {
+  sendMessage(userMessage: string): Promise<ConversationMessageResponse> {
     this.add({
       role: "user",
       content: userMessage,
     });
 
-    const chatResponse = await this.generateCompletion();
-
-    const message = chatResponse.choices[0]?.message;
-    this.add({ ...message, role: "assistant" });
-
-    const toolCall = message.toolCalls?.[0];
-    this.#pendingToolCall = toolCall;
-
-    if (toolCall !== undefined && process.env.NODE_ENV !== "production") {
-      console.log("\n<ToolCall>");
-      console.log(JSON.stringify(toolCall, null, 2));
-      console.log("</ToolCall>");
-    }
-
-    return {
-      content: message.content as string,
-      usage: chatResponse.usage,
-      toolCall: toolCall
-        ? {
-            description: `${toolCall.function.name}(${toolCall.function.arguments})`,
-          }
-        : undefined,
-    };
+    return this.#generateCompletion();
   }
 
   async executeToolCall(accept: boolean): Promise<ConversationMessageResponse> {
@@ -116,22 +119,36 @@ export class Conversation {
       throw new Error("No pending tool call");
     }
 
+    let parsedArguments: Record<string, unknown>;
+    if (typeof toolCall.function.arguments === "string") {
+      try {
+        parsedArguments = JSON.parse(toolCall.function.arguments);
+      } catch {
+        throw new Error(
+          `Tool call arguments must be a valid JSON object, but received unparseable string: ${toolCall.function.arguments}`
+        );
+      }
+    } else {
+      parsedArguments = toolCall.function.arguments;
+    }
+
+    const projectRoot = settingsStore.get("projectDirectory") as string;
+    if (!projectRoot) {
+      throw new Error("Project directory not set in settings");
+    }
+
     this.add({
       role: "tool",
       name: toolCall.function.name,
       content: accept
-        ? await toolMap[toolCall.function.name](toolCall.function.arguments)
+        ? await toolMap[toolCall.function.name]({
+            projectRoot,
+            ...parsedArguments,
+          })
         : "This tool call was successfully processed, but the user rejected executing it, so you cannot access the result. You may acknowledge that the user rejected the previous tool call and ask if they want to re-try it or do something else.",
       toolCallId: toolCall.id,
     });
 
-    const toolResponse = await this.generateCompletion();
-    const toolMessage = toolResponse.choices[0]?.message;
-    this.add({ ...toolMessage, role: "assistant" });
-
-    return {
-      content: toolMessage.content as string,
-      usage: toolResponse.usage,
-    };
+    return this.#generateCompletion();
   }
 }

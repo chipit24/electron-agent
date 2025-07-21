@@ -158,7 +158,7 @@ export function App() {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === "Enter") {
-        if (event.metaKey || event.altKey) {
+        if (event.metaKey || event.altKey || event.shiftKey) {
           // Manually insert newline when modifier keys are pressed
           event.preventDefault();
           const textarea = event.target as HTMLTextAreaElement;

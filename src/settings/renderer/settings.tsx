@@ -1,23 +1,12 @@
 import { useEffect, useState } from "react";
 
 export function Settings() {
-  const [apiKey, setApiKey] = useState("");
-  const [projectDirectory, setProjectDirectory] = useState("");
+  const settings = window.settingsApi.getSettings();
 
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const key = await window.settingsApi.getApiKey();
-        const directory = await window.settingsApi.getProjectDirectory();
-        setApiKey(key || "");
-        setProjectDirectory(directory || "");
-      } catch (error) {
-        console.error("Failed to fetch settings:", error);
-      }
-    };
-
-    fetchSettings();
-  }, []);
+  const [apiKey, setApiKey] = useState(settings.apiKey);
+  const [projectDirectory, setProjectDirectory] = useState(
+    settings.projectDirectory
+  );
 
   const handleClose = () => {
     window.settingsApi.closeWindow();
@@ -25,8 +14,7 @@ export function Settings() {
 
   const handleSave = async () => {
     try {
-      await window.settingsApi.setApiKey(apiKey);
-      await window.settingsApi.setProjectDirectory(projectDirectory);
+      await window.settingsApi.setSettings({ apiKey, projectDirectory });
       handleClose();
     } catch (error) {
       console.error("Failed to save settings:", error);

@@ -1,13 +1,19 @@
 import { contextBridge, ipcRenderer } from "electron";
+import type { Settings } from "./store";
 
 const settingsApi = {
-  getApiKey: () => ipcRenderer.invoke("settings:getApiKey"),
-  setApiKey: (apiKey: string) =>
-    ipcRenderer.invoke("settings:setApiKey", apiKey),
-  getProjectDirectory: () => ipcRenderer.invoke("settings:getProjectDirectory"),
-  setProjectDirectory: (projectDirectory: string) =>
-    ipcRenderer.invoke("settings:setProjectDirectory", projectDirectory),
+  /* Synchronous settings access */
+  getSettings: (): Settings => {
+    return ipcRenderer.sendSync("settings:getAll");
+  },
+
+  /* Async setter for updating settings */
+  setSettings: (settings: Partial<Settings>) =>
+    ipcRenderer.invoke("settings:setAll", settings),
+
+  /* Window management */
   closeWindow: () => ipcRenderer.invoke("settings:closeWindow"),
 };
+
 contextBridge.exposeInMainWorld("settingsApi", settingsApi);
 export type SettingsApi = typeof settingsApi;

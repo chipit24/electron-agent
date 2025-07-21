@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { settingsStore } from "../settings/handlers";
+import { settingsStore } from "../settings/store";
 import { Conversation } from "./conversation";
 
 let conversation: Conversation;

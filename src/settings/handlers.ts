@@ -1,38 +1,19 @@
-import Store from "electron-store";
 import { ipcMain } from "electron";
-
-export const settingsStore = new Store({
-  schema: {
-    apiKey: {
-      type: "string",
-      default: "",
-    },
-    projectDirectory: {
-      type: "string",
-      default: "",
-    },
-  },
-});
+import { settingsStore } from "./store";
 
 export function initSettingsHandlers(
   getSettingsWindow: () => Electron.BrowserWindow | undefined
 ) {
-  ipcMain.handle("settings:getApiKey", () => {
-    return settingsStore.get("apiKey") as string | undefined;
+  /* Synchronous settings getter */
+  ipcMain.on("settings:getAll", (event) => {
+    event.returnValue = settingsStore.store;
   });
 
-  ipcMain.handle("settings:setApiKey", (_event, apiKey: string) => {
-    settingsStore.set("apiKey", apiKey);
-  });
-
-  ipcMain.handle("settings:getProjectDirectory", () => {
-    return settingsStore.get("projectDirectory") as string | undefined;
-  });
-
+  /* Bulk settings setter */
   ipcMain.handle(
-    "settings:setProjectDirectory",
-    (_event, projectDirectory: string) => {
-      settingsStore.set("projectDirectory", projectDirectory);
+    "settings:setAll",
+    (_event, settings: Partial<typeof settingsStore.store>) => {
+      settingsStore.set({ ...settingsStore.store, ...settings });
     }
   );
 

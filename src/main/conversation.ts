@@ -6,7 +6,7 @@ import type {
 } from "@mistralai/mistralai/models/components";
 import coderSystemPrompt from "./coderSystemPrompt.txt?raw";
 import { toolMap, agentToolList } from "./tools/llmTools";
-import { settingsStore } from "../settings/handlers";
+import { settingsStore } from "../settings/store";
 
 export type ConversationMessageResponse = {
   content: string;
@@ -132,7 +132,7 @@ export class Conversation {
       parsedArguments = toolCall.function.arguments;
     }
 
-    const projectRoot = settingsStore.get("projectDirectory") as string;
+    const projectRoot = settingsStore.get("projectDirectory");
     if (!projectRoot) {
       throw new Error("Project directory not set in settings");
     }

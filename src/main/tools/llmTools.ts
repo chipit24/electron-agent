@@ -1,23 +1,23 @@
 import type { Tool as MistralTool } from "@mistralai/mistralai/models/components";
 import type { Tool } from "../conversation";
-import * as listAllFilesAndFoldersInProject from "./listAllFilesAndFoldersInProject";
 import * as executeBashCommand from "./executeBashCommand";
 import * as editFile from "./editFile";
 import * as readFile from "./readFile";
 import * as writeFile from "./writeFile";
 import * as searchFiles from "./searchFiles";
 import * as listDirectory from "./listDirectory";
+import * as globFiles from "./globFiles";
 
 /* When adding a new tool, import it above and add it to this list.
  * You should not have to modify `toolMap` or `agentToolList`; they are derived from this list */
 const tools = [
-  listAllFilesAndFoldersInProject,
-  executeBashCommand,
-  editFile,
+  listDirectory,
+  globFiles,
+  searchFiles,
   readFile,
   writeFile,
-  searchFiles,
-  listDirectory,
+  editFile,
+  executeBashCommand,
 ];
 
 export const toolMap = tools.reduce(

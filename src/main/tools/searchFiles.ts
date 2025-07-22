@@ -76,7 +76,6 @@ export const tool: Tool<{
     }
 
     return JSON.stringify({
-      success: true,
       pattern,
       directory,
       caseSensitive,
@@ -88,7 +87,6 @@ export const tool: Tool<{
     /* grep returns exit code 1 when no matches found, which is not an error */
     if (err.code === 1 && !err.stderr) {
       return JSON.stringify({
-        success: true,
         pattern,
         directory,
         caseSensitive,
@@ -98,7 +96,6 @@ export const tool: Tool<{
     }
 
     return JSON.stringify({
-      success: false,
       error: `Search failed: ${err.message || "Unknown error"}`,
       pattern,
       directory,

@@ -36,12 +36,10 @@ export const tool: Tool<{
       pendingEdits.delete(fullFilePath);
 
       return JSON.stringify({
-        success: true,
         message: `Successfully applied changes to ${filePath}`,
         applied: true,
       });
-    } catch (error: unknown) {
-      const err = error as { message?: string };
+    } catch (error) {
       /* Clean up temp file even if apply failed */
       try {
         await unlink(pendingEdit.tempFilePath);
@@ -51,8 +49,7 @@ export const tool: Tool<{
       pendingEdits.delete(fullFilePath);
 
       return JSON.stringify({
-        success: false,
-        error: `Failed to apply changes: ${err.message || "Unknown error"}`,
+        error: `Failed to apply changes: ${error}`,
       });
     }
   }
@@ -88,7 +85,7 @@ export const tool: Tool<{
         `git diff --no-index --no-prefix "${fullFilePath}" "${tempFilePath}"`,
         { cwd: projectRoot, encoding: "utf8" }
       );
-    } catch (error: unknown) {
+    } catch (error) {
       const err = error as { stdout?: string };
       /* git diff returns non-zero exit code when files differ, which is expected */
       if (err.stdout) {
@@ -106,18 +103,15 @@ export const tool: Tool<{
     });
 
     return JSON.stringify({
-      success: true,
       message: `Prepared edit for ${filePath}. Review the diff and approve to apply changes.`,
       diff: diffOutput,
       filePath,
       requiresApproval: true,
       pendingEdit: true,
     });
-  } catch (error: unknown) {
-    const err = error as { message?: string };
+  } catch (error) {
     return JSON.stringify({
-      success: false,
-      error: `Failed to prepare edit: ${err.message || "Unknown error"}`,
+      error: `Failed to prepare edit: ${error}`,
     });
   }
 };

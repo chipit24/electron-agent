@@ -15,25 +15,20 @@ export const tool: Tool<{
   try {
     /* Check if file exists */
     if (!existsSync(fullFilePath)) {
-      return JSON.stringify({
-        error: `File does not exist: ${filePath}`,
-      });
+      return JSON.stringify({ error: `File does not exist: ${filePath}` });
     }
 
     /* Read file content */
     const content = await readFile(fullFilePath, "utf8");
 
     return JSON.stringify({
-      success: true,
       filePath,
       content,
       size: content.length,
     });
   } catch (error: unknown) {
-    const err = error as { message?: string };
     return JSON.stringify({
-      success: false,
-      error: `Failed to read file: ${err.message || "Unknown error"}`,
+      error: `Failed to read file: ${error}`,
       filePath,
     });
   }

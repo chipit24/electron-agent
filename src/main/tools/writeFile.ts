@@ -25,7 +25,6 @@ export const tool: Tool<{
     await writeFile(fullFilePath, content, "utf8");
 
     return JSON.stringify({
-      success: true,
       filePath,
       message: `Successfully wrote ${content.length} characters to ${filePath}`,
       size: content.length,
@@ -33,7 +32,6 @@ export const tool: Tool<{
   } catch (error: unknown) {
     const err = error as { message?: string };
     return JSON.stringify({
-      success: false,
       error: `Failed to write file: ${err.message || "Unknown error"}`,
       filePath,
     });

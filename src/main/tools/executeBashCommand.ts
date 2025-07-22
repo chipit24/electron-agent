@@ -25,13 +25,12 @@ export const tool: Tool<{
     });
 
     return JSON.stringify({
-      success: true,
       stdout: stdout.trim(),
       stderr: stderr.trim(),
       exitCode: 0,
       command: commandString,
     });
-  } catch (error: unknown) {
+  } catch (error) {
     const err = error as {
       stdout?: string;
       stderr?: string;
@@ -39,7 +38,6 @@ export const tool: Tool<{
       message?: string;
     };
     return JSON.stringify({
-      success: false,
       stdout: err.stdout ? err.stdout.trim() : "",
       stderr: err.stderr ? err.stderr.trim() : "",
       exitCode: err.code || 1,

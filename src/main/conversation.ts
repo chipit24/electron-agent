@@ -19,7 +19,7 @@ export type Tool<
 > = (args: { projectRoot: string } & Params) => Promise<string>;
 
 export class Conversation {
-  static model = "devstral-small-latest" as const;
+  static model = "devstral-medium-latest" as const;
 
   #client;
   #messages: ChatCompletionStreamRequestMessages[] = [

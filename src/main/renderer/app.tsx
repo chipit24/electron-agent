@@ -276,7 +276,7 @@ export function App() {
         <div className="flex gap-1 items-center">
           Powered by
           <a
-            href="https://mistral.ai/news/devstral"
+            href="https://mistral.ai/news/devstral?utm_source=electron-agent"
             target="_blank"
             rel="noreferrer"
             className="text-[#FF8205] flex items-center gap-1"

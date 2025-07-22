@@ -1,12 +1,12 @@
 import type { Tool as MistralTool } from "@mistralai/mistralai/models/components";
-import type { Tool } from "../conversation";
-import * as executeBashCommand from "./executeBashCommand";
-import * as editFile from "./editFile";
-import * as readFile from "./readFile";
-import * as writeFile from "./writeFile";
-import * as searchFiles from "./searchFiles";
-import * as listDirectory from "./listDirectory";
-import * as globFiles from "./globFiles";
+import type { Tool } from "./conversation";
+import * as executeBashCommand from "./tools/executeBashCommand";
+import * as editFile from "./tools/editFile";
+import * as readFile from "./tools/readFile";
+import * as writeFile from "./tools/writeFile";
+import * as searchFiles from "./tools/searchFiles";
+import * as listDirectory from "./tools/listDirectory";
+import * as globFiles from "./tools/globFiles";
 
 /* When adding a new tool, import it above and add it to this list.
  * You should not have to modify `toolMap` or `agentToolList`; they are derived from this list */

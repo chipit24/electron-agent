@@ -5,7 +5,7 @@ import type {
   UsageInfo,
 } from "@mistralai/mistralai/models/components";
 import coderSystemPrompt from "./coderSystemPrompt.txt?raw";
-import { toolMap, agentToolList } from "./tools/llmTools";
+import { toolMap, agentToolList } from "./llmTools";
 import { settingsStore } from "../settings/store";
 
 export type ConversationMessageResponse = {

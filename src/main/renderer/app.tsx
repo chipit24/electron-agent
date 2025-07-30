@@ -77,7 +77,7 @@ export function App() {
         timestamp: new Date(),
         status: "sent",
         toolCall: response.toolCall
-          ? { status: "pending", description: response.toolCall.description }
+          ? { status: "pending", ...response.toolCall }
           : undefined,
       };
 
@@ -124,7 +124,7 @@ export function App() {
           timestamp: new Date(),
           status: "sent",
           toolCall: response.toolCall
-            ? { status: "pending", description: response.toolCall.description }
+            ? { status: "pending", ...response.toolCall }
             : undefined,
         };
 

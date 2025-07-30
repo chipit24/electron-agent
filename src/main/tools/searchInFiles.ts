@@ -104,9 +104,9 @@ export const tool: Tool<{
 };
 
 export const metadata = {
-  name: "searchFiles",
+  name: "searchInFiles",
   description:
-    "Search for text patterns in files using grep. Excludes common build directories and files.",
+    "Search for text patterns within file contents using grep. Finds matches inside files, not filenames. Excludes common build directories and files.",
   params: {
     pattern: {
       type: "string",

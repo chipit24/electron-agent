@@ -4,7 +4,7 @@ import * as executeBashCommand from "./tools/executeBashCommand";
 import * as editFile from "./tools/editFile";
 import * as readFile from "./tools/readFile";
 import * as writeFile from "./tools/writeFile";
-import * as searchFiles from "./tools/searchFiles";
+import * as searchInFiles from "./tools/searchInFiles";
 import * as listDirectory from "./tools/listDirectory";
 import * as globFiles from "./tools/globFiles";
 
@@ -13,7 +13,7 @@ import * as globFiles from "./tools/globFiles";
 const tools = [
   listDirectory,
   globFiles,
-  searchFiles,
+  searchInFiles,
   readFile,
   writeFile,
   editFile,

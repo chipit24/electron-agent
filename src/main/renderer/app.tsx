@@ -149,12 +149,6 @@ export function App() {
     [messages, isLoading]
   );
 
-  const calculateRows = useCallback((text: string) => {
-    if (!text) return 1;
-    const lines = text.split("\n").length;
-    return Math.min(lines, 5); // Cap at 5 rows for reasonable UI
-  }, []);
-
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === "Enter") {
@@ -236,8 +230,7 @@ export function App() {
         {hasApiKey ? (
           <textarea
             name="user-prompt"
-            rows={calculateRows(currentMessage)}
-            className="w-full bg-white border border-gray-300 p-3 rounded-lg leading-5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent custom-scrollbar"
+            className="w-full bg-white border border-gray-300 p-3 rounded-lg leading-5 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent custom-scrollbar field-sizing-content max-h-32"
             placeholder="Type your message ..."
             value={currentMessage}
             onChange={(e) => setCurrentMessage(e.target.value)}
